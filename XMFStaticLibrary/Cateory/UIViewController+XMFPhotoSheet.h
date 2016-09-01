@@ -12,12 +12,26 @@ typedef void (^XMFPhotoSheetFinish)(UIImagePickerController *__nonnull picker, N
 
 @interface UIViewController (XMFPhotoSheet)<UIActionSheetDelegate, UIImagePickerControllerDelegate>
 
+/*!
+ 图片选择
+ */
 - (void)xmf_showPhotoSheetWithPhotoSheetFinish : (XMFPhotoSheetFinish __nullable) finishAction;
 
-- (void)xmf_showViewMovieWithPhotoSheetFinish : (XMFPhotoSheetFinish __nullable) finishAction authorityTips : (NSString * _Nullable)authorityTips;
+/*!
+ 视频选择
+ */
+- (void)xmf_showViewMovieWithPhotoSheetFinish : (XMFPhotoSheetFinish __nullable)
+finishAction authorityTips : (NSString * _Nullable)authorityTips;
 
-- (void)xmf_showViewRecordVideoWithPhotoSheetFinish : (XMFPhotoSheetFinish __nullable) finishAction authorityTips : (NSString * _Nullable)authorityTips;
+/*!
+ 录制视频
+ */
+- (void)xmf_showViewRecordVideoWithPhotoSheetFinish : (XMFPhotoSheetFinish __nullable)
+finishAction authorityTips : (NSString * _Nullable)authorityTips;
 
+/*!
+ 判断权限
+ */
 - (BOOL)requestMediaCapturerAccessWithCompletionHandler:(void (^ _Nullable)(BOOL, NSError* _Nullable))handler;
 
 

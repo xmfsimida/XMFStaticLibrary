@@ -11,6 +11,9 @@
 
 @interface UIAlertView (XMFCategory)
 
+/*!
+ 点击事件
+ */
 - (void)clickedButtonWithAction : (XMFAlertViewHandler __nullable) action;
 
 + (void)showAlertViewInViewController: (UIViewController *_Nullable)vc  action : (XMFAlertViewHandler __nullable) action Title: (nullable NSString *)title message: (nullable NSString *)message cancelButtonTitle: (nullable NSString *)cancelButtonTitle otherButtonTitles:(nullable NSString *)otherButtonTitles, ...;

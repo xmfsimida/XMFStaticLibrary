@@ -39,8 +39,11 @@ typedef void(^ActionBlock)(NSUInteger index);
 
 @interface XMFDropBoxView : UIView
 
+
+/// 数据源
 @property (nonatomic, assign, nonnull) id<XMFDropBoxViewDataSource>  dataSource;
 
+/// 背景颜色
 @property (nonatomic, strong, readonly, nonnull) UIColor *backgroundColor;
 
 // 定位的view

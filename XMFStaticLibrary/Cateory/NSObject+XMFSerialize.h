@@ -24,6 +24,7 @@
  */
 - (id)xmf_copyWithZone : (NSZone *)zone;
 
+/// 在实现文件使用
 #define XMF_CODING() \
 - (instancetype)initWithCoder:(NSCoder *)aDecoder { \
 self = [super init]; \
