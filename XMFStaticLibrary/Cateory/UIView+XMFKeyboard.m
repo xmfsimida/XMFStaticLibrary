@@ -10,21 +10,19 @@
 #import <objc/runtime.h>
 
 @interface UIView()
-
+/// 点击事件
 @property (nonatomic, strong) UITapGestureRecognizer *xmf_tapGesture;
-
+/// 顶部约束
 @property (nonatomic, strong) NSLayoutConstraint *xmf_topConstraint;
-
+/// 是否为自动布局
 @property (nonatomic, assign) BOOL xmf_autoLayout;
-
-@property (nonatomic, assign) BOOL xmf_custom;
-
+/// 自定义高度
 @property (nonatomic, strong) NSNumber *xmf_changeOffset;
-
+/// 控件改变前的高度
 @property (nonatomic, assign) CGFloat xmf_originalY;
-
-@property (nonatomic, assign) CGFloat xmf_contentOffsetY; // 当moveView是scollView的时候记录原有offsetY
-
+/// 当moveView是scollView的时候记录原有offsetY
+@property (nonatomic, assign) CGFloat xmf_contentOffsetY;
+/// 移动的控件
 @property (nonatomic, weak) __kindof UIView *xmf_moveView;
 
 @end
@@ -83,15 +81,6 @@
 
 
 @implementation UIView (XMFKeyboardHeightChange)
-
--(BOOL)xmf_custom {
-    
-    return [objc_getAssociatedObject(self, @selector(xmf_custom)) boolValue];
-}
-
-- (void)setXmf_custom:(BOOL)xmf_custom {
-    objc_setAssociatedObject(self, @selector(xmf_custom), @(xmf_custom), OBJC_ASSOCIATION_ASSIGN);
-}
 
 - (BOOL)xmf_autoLayout {
     
@@ -157,8 +146,8 @@
 
 - (void)xmf_addKeyboardHeightChangeListenWithAutoLayout:(BOOL)autoLayout {
     
-    self.xmf_autoLayout = autoLayout;
-    self.xmf_originalY = self.xmf_moveView ? CGRectGetMidY(self.xmf_moveView.frame) : CGRectGetMidY(self.frame);
+    //    self.xmf_autoLayout = autoLayout;
+    //    self.xmf_originalY = self.xmf_moveView ? CGRectGetMidY(self.xmf_moveView.frame) : CGRectGetMidY(self.frame);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xmf_changeHeightKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xmf_changeHeightkeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -170,9 +159,8 @@
     [self xmf_addKeyboardHeightChangeListenWithAutoLayout:autoLayout];
 }
 
-- (void)xmf_addKeyboardHeightChangeListenWithAutoLayout : (BOOL)autoLayout custom :(BOOL)custom changeHeight : (CGFloat)changeHeight {
+- (void)xmf_addKeyboardHeightChangeListenWithAutoLayout : (BOOL)autoLayout changeHeight : (CGFloat)changeHeight {
     
-    self.xmf_custom = custom;
     self.xmf_changeOffset = @(changeHeight);
     [self xmf_addKeyboardHeightChangeListenWithAutoLayout:autoLayout];
 }
@@ -180,6 +168,7 @@
 - (void)xmf_removeKeyboardHeightChangeListen {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [self xmf_cleanAssociatedObjects];
 }
 
 - (void)xmf_changeHeightKeyboardWillShow: (NSNotification *)notification{
@@ -199,11 +188,10 @@
         self.xmf_contentOffsetY = sv.contentOffset.y;
     }
     if (offet == 0) return;
-    offet = self.xmf_custom ? [self.xmf_changeOffset floatValue] : offet; // 是否自定义view
+    offet = [self.xmf_changeOffset floatValue] > 0 ? [self.xmf_changeOffset floatValue] : offet; // 是否自定义高度
     offet += self.xmf_contentOffsetY;
     
     if (self.xmf_autoLayout) {
-        if (self.xmf_topConstraint) {[moveView.superview removeConstraint:self.xmf_topConstraint];}
         self.xmf_topConstraint = [NSLayoutConstraint constraintWithItem : moveView
                                                               attribute : NSLayoutAttributeTop
                                                               relatedBy : NSLayoutRelationEqual
@@ -214,8 +202,9 @@
         [moveView.superview addConstraint: self.xmf_topConstraint];
     }
     else {
+        moveView.translatesAutoresizingMaskIntoConstraints = YES;
         CGRect bounds = self.frame;
-        bounds.origin.y = CGRectGetMidY(moveView.bounds) - offet;
+        bounds.origin.y = CGRectGetMinY(moveView.frame) - offet;
         moveView.frame = bounds;
     }
     
@@ -230,7 +219,8 @@
     UIViewKeyframeAnimationOptions curve = [[notification.userInfo objectForKey: UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
     
     UIView *moveView = self.xmf_moveView ? self.xmf_moveView : self; // 移动的组件
-    if (self.xmf_autoLayout) {
+    if (self.xmf_autoLayout || moveView.constraints.count > 0) {
+        moveView.translatesAutoresizingMaskIntoConstraints = NO;
         [moveView.superview removeConstraint:self.xmf_topConstraint];
     }
     else {
@@ -244,7 +234,6 @@
         if ([self.xmf_moveView isKindOfClass:[UIScrollView class]]) { // 是否scrollview子类
             UIScrollView *sv = self.xmf_moveView;
             sv.contentOffset = CGPointMake(sv.contentOffset.x, self.xmf_contentOffsetY);
-            [self xmf_cleanAssociatedObjects];
         }
     } completion:NULL];
 }
@@ -253,7 +242,6 @@
     
     objc_setAssociatedObject(self, @selector(xmf_topConstraint), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(self, @selector(xmf_autoLayout), nil, OBJC_ASSOCIATION_ASSIGN);
-    objc_setAssociatedObject(self, @selector(xmf_custom), nil, OBJC_ASSOCIATION_ASSIGN);
     objc_setAssociatedObject(self, @selector(xmf_changeOffset), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(self, @selector(xmf_originalY), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(self, @selector(xmf_contentOffsetY), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
