@@ -27,7 +27,7 @@
 - (UIViewController *)xmf_getBelongViewController {
     
     UIResponder *superResponder = self.nextResponder;
-    if ([superResponder isKindOfClass:[UIViewController class]] || superResponder == nil) return superResponder;
+    if ([superResponder isKindOfClass:[UIViewController class]] || superResponder == nil) return (UIViewController *)superResponder;
     return [(UIView *)superResponder xmf_getBelongViewController];
 }
 
@@ -79,9 +79,8 @@
         Method newMethod = class_getInstanceMethod(self, newSEL);
         
         BOOL isADD = class_addMethod(self, oldSEL, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));
-        
         if (isADD) {
-            class_replaceMethod(self, newMethod, method_getImplementation(oldSEL), method_getTypeEncoding(oldSEL));
+            class_replaceMethod(self, newSEL, method_getImplementation(oldMethod), method_getTypeEncoding(oldMethod));
         }
         else {
             method_exchangeImplementations(oldMethod, newMethod);
