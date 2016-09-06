@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, XMFSegmentViewStyle) {
 
 @property (nonatomic, strong, null_resettable) UIColor *fontSelectedColor; // 高亮颜色和已选择颜色
 
-@property (nonatomic, assign, nullable) id<XMFSegmentViewDelegate> delegate;
+@property (nonatomic, weak, nullable) id<XMFSegmentViewDelegate> delegate;
 
 @property (nonatomic, assign) XMFSegmentViewStyle style;
 

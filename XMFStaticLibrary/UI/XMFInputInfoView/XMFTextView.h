@@ -33,7 +33,7 @@
 
 @property (nonatomic, strong, nullable) UIColor * wordLimitColor;
 
-@property (nonatomic, assign, nullable) id<XMFTextViewDelegate> delegate;
+@property (nonatomic, weak, nullable) id<XMFTextViewDelegate> delegate;
 
 @property(nullable,nonatomic,strong) UIFont *font;
 

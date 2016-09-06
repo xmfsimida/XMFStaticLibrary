@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, XMFTagHeadertType) {
 
 @property (nonatomic, strong, nullable) UIImage *moreImage;
 
-@property (nonatomic, assign, nullable) id<XMFTagHeaderViewDelegate> delegate;
+@property (nonatomic, weak, nullable) id<XMFTagHeaderViewDelegate> delegate;
 
 @property (nonatomic, assign) CGFloat hPadding; // 左右边距
 

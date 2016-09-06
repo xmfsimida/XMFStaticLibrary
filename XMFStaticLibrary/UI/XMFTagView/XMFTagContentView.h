@@ -33,7 +33,7 @@ typedef void(^XMFTagContentViewAction)(NSUInteger index);
 
 @property (nonatomic, assign, getter=isRadioMode) BOOL radioMode; // 是否单选模式 （默认多选模式）
 
-@property (nonatomic, assign, nullable) id<XMFTagContentViewDelegate> delegate;
+@property (nonatomic, weak, nullable) id<XMFTagContentViewDelegate> delegate;
 
 - (void)pushItemWithAction : (XMFTagContentViewAction __nullable)action;
 
